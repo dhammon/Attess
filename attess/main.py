@@ -2,6 +2,7 @@
 import argparse
 from attess.account import Account
 
+
 def parseArgs(inputs):
     #https://gist.github.com/mdelotavo/07a5337426201685f8d2cb1f5c061d61
     #https://docs.python.org/3/library/argparse.html
@@ -25,7 +26,8 @@ def run(inputs):
     args = parseArgs(inputs)
 
     if args.subparser == 'account':
-        number = Account.checkAccountNumber(args.AccountNumber)
-        return str(number)
+        result = Account.checkAccountNumber(args.AccountNumber)
+
+        return result
     
     parseArgs(["--help"])

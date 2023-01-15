@@ -3,7 +3,7 @@ import unittest
 from io import StringIO
 from unittest.mock import patch
 import sys
-sys.path.insert(0, '../Attess')
+sys.path.insert(0, '../attess')
 from attess.main import run
 from attess.main import parseArgs
 
@@ -17,7 +17,7 @@ class TestMain(unittest.TestCase):
 
     def test_run_account(self):
         result = run(['account', '123123123123'])
-        assert result == "123123123123"
+        self.assertIn("AWS Account", result)
     
     #https://stackoverflow.com/questions/39028204/using-unittest-to-test-argparse-exit-errors
     @patch('sys.stderr', new_callable=StringIO)
