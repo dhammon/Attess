@@ -47,6 +47,9 @@ class TestAccount(unittest.TestCase):
         with self.assertRaises(TypeError):
             Account.validateNumber(123)
 
+    def test_validateNumber_sad(self):
+        with self.assertRaises(TypeError):
+            Account.validateNumber(123.123123123)
 
 if __name__ == "__main__":
     unittest.main()

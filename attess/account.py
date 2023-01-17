@@ -29,5 +29,5 @@ class Account:
         return response
 
     def validateNumber(number: int):
-        if len(str(number)) != 12:
-            raise TypeError("Account number must be 12 digits")
+        if len(str(number)) != 12 or number % 1 != 0:
+            raise TypeError("Account number must be 12 whole digits")
