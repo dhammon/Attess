@@ -1,27 +1,24 @@
 
 import argparse
 from attess.account import Account
+from attess.accounts import Accounts
 
 
 def parseArgs(inputs):
-    #https://gist.github.com/mdelotavo/07a5337426201685f8d2cb1f5c061d61
-    #https://docs.python.org/3/library/argparse.html
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="subparser")
 
     #account
-    parser_one = subparsers.add_parser('account', help='Check AWS account number validity')
-    parser_one.add_argument('AccountNumber', type=int, action='store', help='12 digit AWS account number')
+    account_parser = subparsers.add_parser('account', help='Check AWS account number validity')
+    account_parser.add_argument('AccountNumber', type=int, action='store', help='12 digit AWS account number')
     
-    #TODO accounts
-    #min number
-    #max number
-    #threads
-    #display fails
-    #parser_two = subparsers.add_parser('two', help='parser two')
-    #subparser_two = parser_two.add_subparsers()
-    #subparser_two_comment = subparser_two.add_parser('comment-two')
-    #subparser_two_comment.add_argument('opt-two', action='store', help='option two')
+    #accounts
+    accounts_parser = subparsers.add_parser('accounts', help='Check a range of AWS account numbers for validity')
+    accounts_parser.add_argument('StartAccountNumber', type=int, action='store', help='Starting 12 digit AWS account number')
+    accounts_parser.add_argument('EndAccountNumber', type=int, action='store', help='Ending 12 digit AWS account number')
+    accounts_parser.add_argument('--threads', type=int, action='store', default=10, help='Threads; more is faster but will run into AWS rate limits.  Default=10')
+    accounts_parser.add_argument('--show-fails', action='store_true', default=False, help='Show failed attempts.  Default=False')
 
     args = parser.parse_args(inputs)
 
@@ -29,10 +26,16 @@ def parseArgs(inputs):
 
 
 def run(inputs):
+
     args = parseArgs(inputs)
 
     if args.subparser == 'account':
         result = Account.checkAccountNumber(args.AccountNumber)
+
+        return result
+    
+    if args.subparser == 'accounts':
+        result = Accounts.enumerateAccounts(args.StartAccountNumber, args.EndAccountNumber, args.threads, args.show_fails)
 
         return result
     

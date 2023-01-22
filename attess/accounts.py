@@ -1,6 +1,5 @@
 
 from attess.account import Account
-import requests
 from sys import stdout
 import threading
 import time
@@ -9,17 +8,29 @@ import math
 
 class Accounts:
 
-    def enumerateAccounts(minNumber: int, maxNumber: int, threads=10):
+    def enumerateAccounts(minNumber: int, maxNumber: int, threads=10, showFails=False):
         Account.validateNumber(minNumber)
         Account.validateNumber(maxNumber)
         Accounts.validateMinLessThanMax(minNumber, maxNumber)
         Accounts.validateThreadCount(threads)
-        Accounts.makeThreads(minNumber, maxNumber, threads)
+        Accounts.displayModuleBanner(minNumber, maxNumber, threads, showFails)
+        Accounts.makeThreads(minNumber, maxNumber, threads, showFails)
+
+        return True
     
 
-    #TODO test
-    #TODO breakup
-    def makeThreads(startNum: int, endNum: int, threads: int):
+    def displayModuleBanner(minNumber, maxNumber, threads, showFails):
+        print("Module: Accounts")
+        print("Start Account: " + str(minNumber))
+        print("End Account: " + str(maxNumber))
+        print("Thread Count: " + str(threads))
+        print("Show Fails: " + str(showFails))
+        print("")
+        print("--------------------------------------------------")
+        print("")
+    
+    
+    def makeThreads(startNum: int, endNum: int, threads: int, showFails: bool):
         startTime = time.time()
         rangePerThread = math.ceil((endNum - startNum) / threads)
         thread_list = []
@@ -28,7 +39,7 @@ class Accounts:
         while i < threads:
             first = int(startNum + (rangePerThread*i))
             second = int(startNum + rangePerThread + (rangePerThread*i))
-            thread = threading.Thread(target=Accounts.checkAccountNumbers, args=(first,second,i))
+            thread = threading.Thread(target=Accounts.checkAccountNumbers, args=(first,second,i,showFails))
             thread.start()
             thread_list.append(thread)
             i += 1
@@ -41,36 +52,45 @@ class Accounts:
         print("Seconds spent: " + str(round(seconds)))
     
 
-    def checkAccountNumbers(startNum: int, endNum: int, iterator: int):
+    def checkAccountNumbers(startNum: int, endNum: int, iterator: int, showFails: bool):
         for number in range(startNum, endNum):
             response = Account.makeRequest(number)
-            Accounts.handleResponse(response, number)
-            Accounts.handlePercentDisplay(iterator, endNum, startNum, number)
+            Accounts.handleResponse(response, number, showFails)
+            Accounts.handlePercentDisplay(iterator, endNum, startNum, number, showFails)
 
 
-    def handlePercentDisplay(iterator, endNum, startNum, number):
+    def handlePercentDisplay(iterator, endNum, startNum, number, showFails):
         if iterator == 0:
             total = endNum - startNum
             numerator = number+1-startNum
             per = round(numerator / total * 100)
-            LINE_UP = '\033[1A'
-            LINE_CLEAR = '\x1b[2K'
-            print(LINE_UP, end=LINE_CLEAR)
-            print(str(per) + "% complete")
+            message = "[!] " + str(per) + "% complete"
+            if not showFails:
+                LINE_UP = '\033[1A'
+                LINE_CLEAR = '\x1b[2K'
+                print(LINE_UP, end=LINE_CLEAR)    
+            print(message)
 
 
-    def handleResponse(response, number):
-        if response.status_code == 302:
+    def handleResponse(response, number, showFails):
+        status = response.status_code
+        if status == 302:
             message = "[+] Valid AWS Account Found: " + str(number)
-            LINE_UP = '\033[1A'
-            LINE_CLEAR = '\x1b[2K'
-            print(LINE_UP, end=LINE_CLEAR)
-            print(message)
-            print("")
+            Accounts.displayMessage(message, showFails)
 
-        if response.status_code == 429:
+        if status == 429:
             message = "[!] Status Code 429: Too many requests! Decrease threads!"
-            print(message)
+            Accounts.displayMessage(message, showFails)
+        
+        if showFails == True and status != 302 and status != 429:
+            message = "[-] Invalid AWS Account: " + str(number)
+            Accounts.displayMessage(message, showFails)
+    
+
+    def displayMessage(message: str, showFails: bool):
+        print(message)
+        if not showFails:
+            print("")
 
 
     def validateMinLessThanMax(minNumber, maxNumber):

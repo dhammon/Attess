@@ -12,16 +12,31 @@ class TestAccounts(unittest.TestCase):
     def test_enumerateAccounts_happy(self):
         f = StringIO()
         with redirect_stdout(f):
-            Accounts.enumerateAccounts(134672723820, 134672723850)
+            result = Accounts.enumerateAccounts(134672723820, 134672723850)
         self.assertIn("Valid AWS Account Found", f.getvalue())
+        self.assertIn("Module: Accounts", f.getvalue())
+        self.assertIn("Thread Count:", f.getvalue())
         self.assertNotIn("Status Code 429", f.getvalue())
+        self.assertTrue(result)
+        f.close()
+    
+
+    def test_displayModuleBanner(self):
+        f = StringIO()
+        with redirect_stdout(f):
+            Accounts.displayModuleBanner(134672723820, 134672723850, 11, False)
+        self.assertIn("Module: Accounts", f.getvalue())
+        self.assertIn("Start Account: 134672723820", f.getvalue())
+        self.assertIn("End Account: 134672723850", f.getvalue())
+        self.assertIn("Thread Count: 11", f.getvalue())
+        self.assertIn("Show Fails: False", f.getvalue())
         f.close()
     
     
     def test_checkAccountNumbers_happy(self):
         f = StringIO()
         with redirect_stdout(f):
-            Accounts.checkAccountNumbers(134672723820, 134672723850, 1)
+            Accounts.checkAccountNumbers(134672723820, 134672723850, 1, False)
         self.assertIn("Valid AWS Account Found", f.getvalue())
         self.assertNotIn("Status Code 429", f.getvalue())
         f.close()
@@ -30,7 +45,7 @@ class TestAccounts(unittest.TestCase):
     def test_handlePercentDisplay_0(self):
         f = StringIO()
         with redirect_stdout(f):
-            Accounts.handlePercentDisplay(0, 200, 100, 150)
+            Accounts.handlePercentDisplay(0, 200, 100, 150, False)
         actual = f.getvalue()
         self.assertIn("51% complete", actual)
         f.close()
@@ -42,7 +57,7 @@ class TestAccounts(unittest.TestCase):
             status_code = 302
         response = Response()
         with redirect_stdout(f):
-            Accounts.handleResponse(response, 123123123123)
+            Accounts.handleResponse(response, 123123123123, False)
         self.assertIn("Valid AWS Account Found", f.getvalue())
         f.close()
 
@@ -53,9 +68,41 @@ class TestAccounts(unittest.TestCase):
             status_code = 429
         response = Response()
         with redirect_stdout(f):
-            Accounts.handleResponse(response, 123123123123)
+            Accounts.handleResponse(response, 123123123123, False)
         self.assertIn("Status Code 429", f.getvalue())
         f.close()
+    
+
+    def test_handleResponse_failsShow(self):
+        f = StringIO()
+        class Response:
+            status_code = 404
+        response = Response()
+        with redirect_stdout(f):
+            Accounts.handleResponse(response, 123123123123, True)
+        self.assertIn("Invalid AWS Account", f.getvalue())
+        f.close()
+
+
+    def test_handleResponse_failsNoShow(self):
+        f = StringIO()
+        class Response:
+            status_code = 404
+        response = Response()
+        with redirect_stdout(f):
+            Accounts.handleResponse(response, 123123123123, False)
+        self.assertNotIn("Invalid AWS Account", f.getvalue())
+        f.close()
+    
+
+    def test_displayMessage(self):
+        message = "lol"
+        f = StringIO()
+        with redirect_stdout(f):
+            Accounts.displayMessage(message, False)
+        actual = f.getvalue()
+        self.assertIn("lol", actual)
+        f.close
 
 
     def test_validateMinLessThanMax_happy(self):
