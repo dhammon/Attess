@@ -30,8 +30,18 @@ pip install -r requirements.txt
 ## Account Module
 Test a single AWS account number is valid (in use).
 ```
-daniel@daniel-desktop:~/Attess# ./attess.py account 123123123123
+./attess.py account 123123123123
+
 [-] Invalid AWS Account: 123123123123
+```
+
+## Accounts Module
+Test a range of AWS account numbers for use.
+```
+ ./attess.py accounts 123123123123 123123123173 --threads=10
+
+[!] 100% complete
+Seconds spent: 2
 ```
 
 # Credits
