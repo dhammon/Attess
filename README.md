@@ -44,5 +44,14 @@ Test a range of AWS account numbers for use.
 Seconds spent: 2
 ```
 
+## ECR Module
+Identify misconfigured open container repositories through bruteforce.  Not stealthy and requires `principal: *` misconfigured policy.
+```
+./attess.py containers 123123123123
+
+[!] Completed
+```
+
+
 # Credits
 Ascii (ANSI Shadow) art generated using patorjk.com

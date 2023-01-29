@@ -1,0 +1,4 @@
+
+testVars = {
+    "ACCOUNTNUMBER": <12 DIGIT AWS NUMBER FROM TEST ENV>
+}
