@@ -2,3 +2,6 @@
 .vscode
 __pycache__
 notes.md
+.terraform*
+terraform*
+config.py

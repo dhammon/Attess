@@ -1,5 +1,6 @@
 
 from attess.account import Account
+from attess.utils import Utils
 from sys import stdout
 import threading
 import time
@@ -76,22 +77,16 @@ class Accounts:
         status = response.status_code
         if status == 302:
             message = "[+] Valid AWS Account Found: " + str(number)
-            Accounts.displayMessage(message, showFails)
+            Utils.displayMessage(message, showFails)
 
         if status == 429:
             message = "[!] Status Code 429: Too many requests! Decrease threads!"
-            Accounts.displayMessage(message, showFails)
+            Utils.displayMessage(message, showFails)
         
         if showFails == True and status != 302 and status != 429:
             message = "[-] Invalid AWS Account: " + str(number)
-            Accounts.displayMessage(message, showFails)
+            Utils.displayMessage(message, showFails)
     
-
-    def displayMessage(message: str, showFails: bool):
-        print(message)
-        if not showFails:
-            print("")
-
 
     def validateMinLessThanMax(minNumber, maxNumber):
         if minNumber >= maxNumber:

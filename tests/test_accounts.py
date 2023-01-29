@@ -95,16 +95,6 @@ class TestAccounts(unittest.TestCase):
         f.close()
     
 
-    def test_displayMessage(self):
-        message = "lol"
-        f = StringIO()
-        with redirect_stdout(f):
-            Accounts.displayMessage(message, False)
-        actual = f.getvalue()
-        self.assertIn("lol", actual)
-        f.close
-
-
     def test_validateMinLessThanMax_happy(self):
         result = Accounts.validateMinLessThanMax(1,2)
         self.assertIsNone(result)

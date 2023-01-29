@@ -1,0 +1,11 @@
+test
+debug
+production
+prod
+dev
+development
+stage
+staging
+private
+public_repo
+private_repo

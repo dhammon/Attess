@@ -2,6 +2,7 @@
 import unittest
 import sys
 sys.path.insert(0, '../attess')
+import config as cfg
 from attess.account import Account
 from io import StringIO
 from contextlib import redirect_stdout
@@ -10,8 +11,11 @@ from contextlib import redirect_stdout
 class TestAccount(unittest.TestCase):
     
     def test_checkAccountNumber_happy(self):
-        result = Account.checkAccountNumber(123456789012)
+        f = StringIO()
+        with redirect_stdout(f):
+            result = Account.checkAccountNumber(123456789012)
         assert result == "[-] Invalid AWS Account: 123456789012"
+        f.close()
 
 
     def test_checkAccountNumber_sad(self):
@@ -47,7 +51,7 @@ class TestAccount(unittest.TestCase):
 
 
     def test_makeRequest_happy(self):
-        result = Account.makeRequest(134672723840)
+        result = Account.makeRequest(cfg.testVars["ACCOUNTNUMBER"])
         assert result.status_code == 302
 
 
@@ -57,7 +61,7 @@ class TestAccount(unittest.TestCase):
 
 
     def test_validateNumber_happy(self):
-        result = Account.validateNumber(123456789012)
+        result = Account.validateNumber(cfg.testVars["ACCOUNTNUMBER"])
         self.assertIsNone(result)
 
 
