@@ -53,11 +53,14 @@ Identify misconfigured open container repositories through bruteforce.  Not stea
 ```
 
 ## Surface Module
-Requires AWS credentials set:
+List public FQDN and IPs from AWS services.  Requires AWS credentials set:
 ```bash
 export AWS_ACCESS_KEY_ID=SOME_KEY
 export AWS_SECRET_ACCESS_KEY=SOME_KEY
+./attess.py surface us-east-1
+['18.208.212.174']
 ```
+
 
 
 # Test
