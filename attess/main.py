@@ -4,6 +4,7 @@ from os import path
 from attess.account import Account
 from attess.accounts import Accounts
 from attess.containers import Containers
+from attess.surface import Surface
 
 
 def parseArgs(inputs):
@@ -28,6 +29,10 @@ def parseArgs(inputs):
     containers_parser.add_argument('--show-fails', action='store_true', default=False, help='Show failed attempts.  Default=False')
     containers_parser.add_argument('--wordlist', action='store',default=path.dirname(__file__)+"/data/ecr.txt", help='Wordlist path. Default=data/ecr.txt')
 
+    #surface
+    containers_parser = subparsers.add_parser('surface', help='List Public FQDN and IPs (requires authentication)')
+    containers_parser.add_argument('Region', type=str, default='all', help='AWS region, default all regions')
+
     args = parser.parse_args(inputs)
 
     return args
@@ -47,6 +52,10 @@ def run(inputs):
 
     if args.subparser == 'containers':
         result = Containers.bruteforceRepos(args.AccountNumber, args.show_fails, args.wordlist)
+        return result
+    
+    if args.subparser == 'surface':
+        result = Surface.get_surface(args.Region)
         return result
     
     parseArgs(["--help"])

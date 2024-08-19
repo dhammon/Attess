@@ -10,7 +10,23 @@ from attess.main import parseArgs
 
 
 class TestMain(unittest.TestCase):
+
+    def test_parseArgs_surface(self):
+        parser = parseArgs(['surface', 'us-east-1'])
+        assert parser.Region == 'us-east-1'
+        assert parser.subparser == 'surface'        
+
+
+    def test_run_surface(self):
+        f = StringIO()
+        with redirect_stdout(f):
+            result = run(['surface', 'us-east-1'])
+        actual = f.getvalue()
+        self.assertIn("[", actual)
+        self.assertIn("]", actual)
+        f.close
     
+
     def test_parseArgs_account(self):
         parser = parseArgs(['account', '123123123'])
         assert parser.AccountNumber == 123123123
