@@ -52,6 +52,19 @@ Identify misconfigured open container repositories through bruteforce.  Not stea
 [!] Completed
 ```
 
+## Surface Module
+Requires AWS credentials set:
+```bash
+export AWS_ACCESS_KEY_ID=SOME_KEY
+export AWS_SECRET_ACCESS_KEY=SOME_KEY
+```
+
+
+# Test
+```bash
+python3 -W ignore:ImportWarning -m unittest discover -s tests/ -p test_surface.py
+python3 -W ignore:ImportWarning -m unittest discover -s tests/ -p test_surface.py -k test_reservations
+```
 
 # Credits
 Ascii (ANSI Shadow) art generated using patorjk.com
